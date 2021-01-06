@@ -51,6 +51,9 @@ app.post('/', jsonParser, (req, res) => {
     addNewBooking(req.body)
     res.send()
 })
+app.get("/*", (req, res) => {
+    res.send('Not Allowed')
+})
 
 app.listen(3000, () => {
     console.log('Example app listening on port 3000!');
