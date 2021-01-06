@@ -48,7 +48,6 @@ app.post('/notifications/newBookings', jsonParser, (req, res) => {
 })
 
 app.post('/', jsonParser, (req, res) => {
-    addNewBooking(req.body)
     res.send()
 })
 app.get("/*", (req, res) => {
