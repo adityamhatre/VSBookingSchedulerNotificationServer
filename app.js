@@ -43,15 +43,15 @@ app.post('/notifications/updatedBooking', jsonParser, (req, res) => {
 
 app.get('/checkForUpdates', (req, res) => {
     var db = admin.database()
-    db.ref('/latestBuild').once('value', obj => {
-        console.log(obj)
+    db.ref('/latestBuild').once('value', snap => {
+        const obj = snap.val()
         const latestBuild = {
             buildNumber: obj.value,
             downloadLink: obj.link
         }
         res.send(latestBuild)
     })
-    res.send("lol")
+   // res.send("lol")
 
 })
 
