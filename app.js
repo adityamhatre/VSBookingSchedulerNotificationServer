@@ -39,6 +39,13 @@ app.post('/notifications/updatedBooking', jsonParser, (req, res) => {
     res.send()
 })
 
+app.get('/checkForUpdates', (req, res) => {
+    const latestBuild = {
+        buildNumber: req.query.build,
+        downloadLink: "https://www.vasantshrushti.com"
+    }
+    res.send(latestBuild)
+})
 
 app.get("/*", (req, res) => {
     res.send('Not Allowed')
