@@ -7,9 +7,11 @@ const app = express()
 const jsonParser = bodyParser.json()
 
 const serviceAccount = JSON.parse(process.env.service_account_json)
+const databaseURL = process.env.firebase_rtdb_url
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
+    databaseURL
 });
 
 
@@ -40,14 +42,17 @@ app.post('/notifications/updatedBooking', jsonParser, (req, res) => {
 })
 
 app.get('/checkForUpdates', (req, res) => {
-    const latestBuild = {
-        buildNumber: req.query.build,
-        downloadLink: "https://www.vasantshrushti.com"
-    }
-    res.send(latestBuild)
+    var db = admin.database()
+    db.ref('/latestBuild').once('value', obj => {
+        const latestBuild = {
+            buildNumber: obj.value,
+            downloadLink: obj.link
+        }
+        res.send(latestBuild)
+    })
 })
 
-app.get("/*", (req, res) => {
+app.get('/*', (req, res) => {
     res.send('Not Allowed')
 })
 
