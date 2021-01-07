@@ -17,7 +17,6 @@ const sendNotificationToTopic = (topic, data) => {
     var message = {
         topic, data: { ...data, topic, notificationId: uuidv4() }
     };
-console.log(message)
     admin.messaging().send(message)
         .then((response) => {
             console.log('Successfully sent message:', response);
