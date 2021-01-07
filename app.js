@@ -51,8 +51,6 @@ app.get('/checkForUpdates', (req, res) => {
         }
         res.send(latestBuild)
     })
-   // res.send("lol")
-
 })
 
 app.get('/*', (req, res) => {
