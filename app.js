@@ -11,7 +11,7 @@ const databaseURL = process.env.firebase_rtdb_url
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL
+    databaseURL: databaseURL
 });
 
 
