@@ -16,8 +16,24 @@ admin.initializeApp({
 
 
 const sendNotificationToTopic = (topic, data) => {
+    let notification = {}
+    if (topic === 'new-booking-topic') {
+        notification[title] = `New booking for ${data.bookingMainPerson}`
+    }
+    if (topic === 'updated-booking-topic') {
+        notification[title] = `Booking updated for ${data.bookingMainPerson}`
+    }
+
+    notification[body] = `From ${data.checkIn} to ${data.checkOut}`
+
     var message = {
-        topic, data: { ...data, topic, notificationId: uuidv4() }
+        topic,
+        notification,
+        data: {
+            ...data,
+            topic,
+            notificationId: uuidv4(),
+        }
     };
     admin.messaging().send(message)
         .then((response) => {
@@ -52,6 +68,19 @@ app.get('/checkForUpdates', (req, res) => {
         res.send(latestBuild)
     })
 })
+
+app.get('/availability', (req, res) => {
+    const checkIn = req.query.checkIn
+    const checkOut = req.query.checkOut
+
+    if (!(checkIn && checkOut)) {
+        res.status(400).send('Both check in and check out times are required')
+    }
+
+    res.send(`${checkIn} -> ${checkOut}`)
+
+})
+
 
 app.get('/*', (req, res) => {
     res.send('Not Allowed')
