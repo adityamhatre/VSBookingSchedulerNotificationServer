@@ -25,6 +25,8 @@ const sendNotificationToTopic = (topic, data) => {
     }
 
     notification['body'] = `From ${data.checkIn} to ${data.checkOut}`
+    notification['click_action'] = '.MainActivity'
+    notification['icon'] = 'icon'
 
     var message = {
         topic,
