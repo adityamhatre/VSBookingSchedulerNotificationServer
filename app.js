@@ -30,7 +30,7 @@ const sendNotificationToTopic = (topic, data) => {
 
     var message = {
         topic,
-        notification,
+        android: { notification },
         data: {
             ...data,
             topic,
