@@ -18,13 +18,13 @@ admin.initializeApp({
 const sendNotificationToTopic = (topic, data) => {
     let notification = {}
     if (topic === 'new-booking-topic') {
-        notification[title] = `New booking for ${data.bookingMainPerson}`
+        notification['title'] = `New booking for ${data.bookingMainPerson}`
     }
     if (topic === 'updated-booking-topic') {
-        notification[title] = `Booking updated for ${data.bookingMainPerson}`
+        notification['title'] = `Booking updated for ${data.bookingMainPerson}`
     }
 
-    notification[body] = `From ${data.checkIn} to ${data.checkOut}`
+    notification['body'] = `From ${data.checkIn} to ${data.checkOut}`
 
     var message = {
         topic,
