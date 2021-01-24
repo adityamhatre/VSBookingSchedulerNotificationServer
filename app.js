@@ -161,10 +161,6 @@ app.get('/availability', (req, res) => {
 
 })
 
-app.get('/*', (req, res) => {
-    res.send('Not Allowed')
-})
-
 app.listen(process.env.PORT || 80, () => {
     console.log(`Server listening on port ${process.env.PORT || 80}!`);
 });
@@ -189,6 +185,10 @@ app.get('/notifyBooking/1600', (req, res) => {
     res.send()
 })
 
+
+app.get('/*', (req, res) => {
+    res.send('Not Allowed')
+})
 
 // =====> crap from here onwards
 // setInterval(() => {
