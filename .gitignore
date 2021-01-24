@@ -2,3 +2,5 @@ node_modules/
 service-account.json
 firebase-rtdb-url.txt
 set-env.ps1
+*.txt
+*.code-workspace

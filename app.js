@@ -51,7 +51,7 @@ const checkBookings = time => {
     const today = JSJoda.LocalDate.now(JSJoda.ZoneOffset.ofHoursMinutes(5, 30))
     const tomorrow = today.plusDays(1)
 
-    const t = time === 930 ? '09:30 AM' : time === 1730 ? '05:30 PM' : time === 1600 ? '04:00 PM': '09:30 AM'
+    const t = time === 930 ? '09:30 AM' : time === 1730 ? '05:30 PM' : time === 1600 ? '04:00 PM' : '09:30 AM'
     const checkingFor = `${twoDigit(tomorrow.dayOfMonth())} ${toMonthName(tomorrow.monthValue())} ${tomorrow.year()}, ${t}`
 
     admin.firestore().collection('bookings')
@@ -172,12 +172,22 @@ app.listen(process.env.PORT || 80, () => {
 const cronExpression930 = '30 9 * * *'
 const cronExpression1730 = '30 17 * * *'
 const cronExpression1600 = '0 16 * * *'
-
 cron.schedule(cronExpression930, () => checkAndNotifyBookings(930), { timezone: 'Asia/Kolkata' })
 cron.schedule(cronExpression1730, () => checkAndNotifyBookings(1730), { timezone: 'Asia/Kolkata' })
 cron.schedule(cronExpression1600, () => checkAndNotifyBookings(1600), { timezone: 'Asia/Kolkata' })
 
-
+app.get('/notifyBooking/930', (req, res) => {
+    checkAndNotifyBookings(930)
+    res.send()
+})
+app.get('/notifyBooking/1730', (req, res) => {
+    checkAndNotifyBookings(1730)
+    res.send()
+})
+app.get('/notifyBooking/1600', (req, res) => {
+    checkAndNotifyBookings(1600)
+    res.send()
+})
 
 
 // =====> crap from here onwards
