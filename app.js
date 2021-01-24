@@ -190,6 +190,9 @@ app.get('/*', (req, res) => {
     res.send('Not Allowed')
 })
 
+// https://console.cron-job.org/jobs
+// if heroku sleeps, the above should wake it up at 9.30a, 4.00p, 5.30p
+
 // =====> crap from here onwards
 // setInterval(() => {
 //     const currentTime = JSJoda.LocalDateTime.now(JSJoda.ZoneOffset.ofHoursMinutes(5, 30))
