@@ -24,8 +24,9 @@ const toValidPattern = localDateTime => {
 }
 
 const notifyBookingIsTomorrow = event => {
-    console.log(event)
-    // admin.firestore().collection('bookings').doc(event.bookingIdOnGoogle).update({ notified: true })
+    const topic = 'tomorrow-booking-topic'
+    // admin.firestore().collection('bookings').doc(event.bookingIdOnGoogle).update({ notified: 'true' })
+    sendNotificationToTopic(topic, event)
 }
 
 
@@ -56,9 +57,10 @@ const checkBookings = time => {
 
     const t = time === 930 ? '09:30 AM' : time === 1730 ? '05:30 PM' : '09:30 AM'
     const checkingFor = `${twoDigit(tomorrow.dayOfMonth())} ${toMonthName(tomorrow.monthValue())} ${tomorrow.year()}, ${t}`
+    console.log(checkingFor)
     admin.firestore().collection('bookings')
         .where('checkIn', '==', checkingFor)
-        .where('notified', '==', false).get()
+        .where('notified', '==', 'false').get()
         .then(docs => {
             docs.forEach(doc => notifyBookingIsTomorrow(doc.data()))
         }, err => { console.error(err) })
@@ -77,6 +79,9 @@ const sendNotificationToTopic = (topic, data) => {
     if (topic === 'updated-booking-topic') {
         notification['title'] = `Booking updated for ${data.bookingMainPerson}`
     }
+    if (topic === 'tomorrow-booking-topic') {
+        notification['title'] = `Tomorrow is ${data.bookingMainPerson}'s booking!`
+    }
 
     notification['body'] = `From ${data.checkIn} to ${data.checkOut}`
     notification['click_action'] = '.MainActivity'
@@ -91,24 +96,25 @@ const sendNotificationToTopic = (topic, data) => {
             notificationId: uuidv4(),
         }
     };
-    admin.messaging().send(message)
-        .then((response) => {
-            console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-            console.log('Error sending message:', error);
-        });
+
+    console.log(message)
+    // admin.messaging().send(message)
+    //     .then((response) => {
+    //         console.log('Successfully sent message:', response);
+    //     })
+    //     .catch((error) => {
+    //         console.log('Error sending message:', error);
+    //     });
 }
 
 
 const createBookingInFirestore = data => {
     const id = data.bookingIdOnGoogle
-    data['notified'] = false
+    data['notified'] = 'false'
     admin.firestore().collection('bookings').doc(id).set(data)
 }
 const updateBookingInFirestore = data => {
     const id = data.bookingIdOnGoogle
-    data['notified'] = false
     admin.firestore().collection('bookings').doc(id).update({ ...data })
 }
 
@@ -168,17 +174,18 @@ app.listen(process.env.PORT || 80, () => {
     console.log(`Server listening on port ${process.env.PORT || 80}!`);
 });
 
-const cronExpression930 = '1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59 * * * *'//'30 9 * * *'
-const cronExpression1730 = '0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58 * * * *'//'30 17 * * *'
-cron.schedule(cronExpression930, () => checkAndNotifyBookings(930), { timezone: 'Asia/Kolkata' })
-cron.schedule(cronExpression1730, () => checkAndNotifyBookings(1730), { timezone: 'Asia/Kolkata' })
-setInterval(() => {
-    const currentTime = JSJoda.LocalDateTime.now(JSJoda.ZoneOffset.ofHoursMinutes(5, 30))
-    console.log(currentTime.toString())
-}, 1000)
+// const cronExpression930 = '1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59 * * * *'//'30 9 * * *'
+// const cronExpression1730 = '0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58 * * * *'//'30 17 * * *'
+// cron.schedule(cronExpression930, () => checkAndNotifyBookings(930), { timezone: 'Asia/Kolkata' })
+// cron.schedule(cronExpression1730, () => checkAndNotifyBookings(1730), { timezone: 'Asia/Kolkata' })
+// setInterval(() => {
+//     const currentTime = JSJoda.LocalDateTime.now(JSJoda.ZoneOffset.ofHoursMinutes(5, 30))
+//     console.log(currentTime.toString())
+// }, 1000)
 
 
 
+checkAndNotifyBookings(930)
 
 
 const setupFirestore = () => {
@@ -509,7 +516,7 @@ const setupFirestore = () => {
 
     for (let event of events) {
         for (let docId in event) {
-            admin.firestore().collection('bookings').doc(docId).set(event[docId])
+            admin.firestore().collection('bookings').doc(docId).set({ ...event[docId], notified: 'false' })
         }
     }
 }
