@@ -106,6 +106,11 @@ const createBookingInFirestore = data => {
     data['notified'] = false
     admin.firestore().collection('bookings').doc(id).set(data)
 }
+const updateBookingInFirestore = data => {
+    const id = data.bookingIdOnGoogle
+    data['notified'] = false
+    admin.firestore().collection('bookings').doc(id).update({...data})
+}
 
 const deleteBookingInFirestore = data => {
     const id = data.bookingIdOnGoogle
@@ -122,7 +127,7 @@ app.post('/notifications/newBookingCreated', jsonParser, (req, res) => {
 app.post('/notifications/updatedBooking', jsonParser, (req, res) => {
     const topic = 'updated-booking-topic';
     sendNotificationToTopic(topic, req.body)
-    createBookingInFirestore(req.body)   // create and update is same in firebase since the id of event does not change when updated
+    updateBookingInFirestore(req.body) 
     res.send()
 })
 
