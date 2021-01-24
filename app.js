@@ -119,14 +119,14 @@ const deleteBookingInFirestore = data => {
 
 app.post('/notifications/newBookingCreated', jsonParser, (req, res) => {
     const topic = 'new-booking-topic';
-    sendNotificationToTopic(topic, req.body)
+    // sendNotificationToTopic(topic, req.body)
     createBookingInFirestore(req.body)
     res.send()
 })
 
 app.post('/notifications/updatedBooking', jsonParser, (req, res) => {
     const topic = 'updated-booking-topic';
-    sendNotificationToTopic(topic, req.body)
+    // sendNotificationToTopic(topic, req.body)
     updateBookingInFirestore(req.body)
     res.send()
 })
@@ -168,14 +168,14 @@ app.listen(process.env.PORT || 80, () => {
     console.log(`Server listening on port ${process.env.PORT || 80}!`);
 });
 
-// const cronExpression930 = '1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59 * * * *'//'30 9 * * *'
-// const cronExpression1730 = '0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58 * * * *'//'30 17 * * *'
-// cron.schedule(cronExpression930, () => checkAndNotifyBookings(930), { timezone: 'Asia/Kolkata' })
-// cron.schedule(cronExpression1730, () => checkAndNotifyBookings(1730), { timezone: 'Asia/Kolkata' })
-// setInterval(() => {
-//     const currentTime = JSJoda.LocalDateTime.now(JSJoda.ZoneOffset.ofHoursMinutes(5, 30))
-//     console.log(currentTime.toString())
-// }, 1000)
+const cronExpression930 = '1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59 * * * *'//'30 9 * * *'
+const cronExpression1730 = '0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58 * * * *'//'30 17 * * *'
+cron.schedule(cronExpression930, () => checkAndNotifyBookings(930), { timezone: 'Asia/Kolkata' })
+cron.schedule(cronExpression1730, () => checkAndNotifyBookings(1730), { timezone: 'Asia/Kolkata' })
+setInterval(() => {
+    const currentTime = JSJoda.LocalDateTime.now(JSJoda.ZoneOffset.ofHoursMinutes(5, 30))
+    console.log(currentTime.toString())
+}, 1000)
 
 
 
