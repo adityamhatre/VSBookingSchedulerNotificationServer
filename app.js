@@ -48,7 +48,7 @@ const toMonthName = monthNumber => {
     return month[monthNumber - 1]
 }
 const toMonthNumber = monthName => {
-    return twoDigit(month.indexOf(month.filter(m => m === monthName)[0]))
+    return twoDigit(1 + month.indexOf(month.filter(m => m === monthName)[0]))
 }
 const checkBookings = time => {
     const today = JSJoda.LocalDate.now(JSJoda.ZoneOffset.ofHoursMinutes(5, 30))
