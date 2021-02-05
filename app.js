@@ -44,8 +44,11 @@ month[8] = "September";
 month[9] = "October";
 month[10] = "November";
 month[11] = "December";
-const toMonthName = (monthNumber) => {
+const toMonthName = monthNumber => {
     return month[monthNumber - 1]
+}
+const toMonthNumber = monthName => {
+    return twoDigit(month.indexOf(month.filter(m => m === monthName)[0]))
 }
 const checkBookings = time => {
     const today = JSJoda.LocalDate.now(JSJoda.ZoneOffset.ofHoursMinutes(5, 30))
@@ -118,10 +121,28 @@ const deleteBookingInFirestore = data => {
     admin.firestore().collection('bookings').doc(id).delete()
 }
 
+const decrementCountInFirebase = data => incrementOrDecrementBookingsCountInFirebase(data, -1)
+
+const incrementCountInFirebase = data => incrementOrDecrementBookingsCountInFirebase(data, 1)
+
+const incrementOrDecrementBookingsCountInFirebase = (data, count) => {
+    const checkInDate = data.checkIn.substring(0, data.checkIn.indexOf(','))
+    const [date, month, year] = checkInDate.split(' ')
+    const key = `${twoDigit(date)}${toMonthNumber(month)}`
+
+    const bookingsRef = admin.database().ref('bookingsSummary').child(key)
+    bookingsRef.once('value', snap => {
+        const ogCount = snap.val()
+        const newCount = ogCount + count
+        bookingsRef.set(newCount)
+    })
+}
+
 app.post('/notifications/newBookingCreated', jsonParser, (req, res) => {
     const topic = 'new-booking-topic';
     sendNotificationToTopic(topic, req.body)
     createBookingInFirestore(req.body)
+    incrementCountInFirebase(req.body)
     res.send()
 })
 
@@ -134,6 +155,7 @@ app.post('/notifications/updatedBooking', jsonParser, (req, res) => {
 
 app.post('/deleteBooking', jsonParser, (req, res) => {
     deleteBookingInFirestore(req.body)
+    decrementCountInFirebase(req.body)
     res.send()
 })
 
@@ -159,6 +181,13 @@ app.get('/availability', (req, res) => {
 
     res.send(`${checkIn} -> ${checkOut}`)
 
+})
+
+app.get('/bookingsSummary', (req, res) => {
+    const bookingsRef = admin.database().ref('bookingsSummary')
+    bookingsRef.once('value', snap => {
+        res.send(snap.val())
+    })
 })
 
 app.listen(process.env.PORT || 80, () => {
