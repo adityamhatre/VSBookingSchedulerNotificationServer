@@ -128,7 +128,7 @@ const incrementCountInFirebase = data => incrementOrDecrementBookingsCountInFire
 const incrementOrDecrementBookingsCountInFirebase = (data, count) => {
     const checkInDate = data.checkIn.substring(0, data.checkIn.indexOf(','))
     const [date, month, year] = checkInDate.split(' ')
-    const key = `${twoDigit(date)}${toMonthNumber(month)}`
+    const key = `${toMonthNumber(month)}${year}`
 
     const bookingsRef = admin.database().ref('bookingsSummary').child(key)
     bookingsRef.once('value', snap => {
